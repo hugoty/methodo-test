@@ -7,11 +7,18 @@ const connectionString = process.env.MONGO_URI || "";
 const client = new MongoClient(connectionString);
 
 let conn;
-try {
-    conn = await client.connect();
-} catch(e) {
-    console.error(e);
+let db;
+
+async function connectToClient() {
+    try {
+        conn = await client.connect();
+        db = conn.db(process.env.MONGO_DB || "");
+    } catch (e) {
+        console.error(e);
+    }
 }
-let db = conn.db(process.env.MONGO_DB || "");
+
+connectToClient();
+
 
 export default db;

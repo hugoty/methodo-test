@@ -1,46 +1,17 @@
 openapi: 3.0.0
 info:
-  title: User Session Management API
+  title: User and Session Management API
   version: 1.0.0
 servers:
-  - url: 'https://api.yourdomain.com'
+  - url: /api
 paths:
-  /{id}:
-    get:
-      summary: Get a user by ID
-      operationId: getUserById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-    delete:
-      summary: Delete a user by ID
-      operationId: deleteUserById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: User deleted successfully
-  /:
+  /users:
     get:
       summary: Get all users
       operationId: getUsers
       responses:
         '200':
-          description: List of users retrieved successfully
+          description: A list of users
           content:
             application/json:
               schema:
@@ -58,10 +29,39 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '201':
-          description: User created successfully
+          description: User created
+    delete:
+      summary: Delete all users
+      operationId: deleteUsers
+      responses:
+        '204':
+          description: Users deleted
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
     put:
       summary: Update an existing user
       operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -70,14 +70,20 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: User updated successfully
+          description: User updated
     delete:
-      summary: Delete all users
-      operationId: deleteUsers
+      summary: Delete a user by ID
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '204':
-          description: All users deleted successfully
-  /login:
+          description: User deleted
+  /users/login:
     post:
       summary: User login
       operationId: login
@@ -86,15 +92,19 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               required:
                 - email
+                - password
               properties:
                 email:
+                  type: string
+                password:
                   type: string
       responses:
         '200':
           description: Login successful
-  /{userId}/sessions:
+  /sessions/{userId}/sessions:
     post:
       summary: Add a session to a user
       operationId: addSessionToUser
@@ -112,7 +122,7 @@ paths:
               $ref: '#/components/schemas/SessionPort'
       responses:
         '201':
-          description: Session added successfully
+          description: Session added
     get:
       summary: Get all sessions for a user
       operationId: getSessionsByUserId
@@ -124,14 +134,14 @@ paths:
             type: string
       responses:
         '200':
-          description: Sessions retrieved successfully
+          description: An array of sessions
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SessionPort'
-  /{userId}/sessions/{sessionId}:
+  /sessions/{userId}/sessions/{sessionId}:
     put:
       summary: Update a session
       operationId: updateSession
@@ -154,7 +164,7 @@ paths:
               $ref: '#/components/schemas/SessionPort'
       responses:
         '200':
-          description: Session updated successfully
+          description: Session updated
     delete:
       summary: Delete a session
       operationId: deleteSession
@@ -171,8 +181,8 @@ paths:
             type: string
       responses:
         '204':
-          description: Session deleted successfully
-  /{userId}/sessions/{sessionId}/pauses:
+          description: Session deleted
+  /pauses/{userId}/sessions/{sessionId}/pauses:
     post:
       summary: Add a pause to a session
       operationId: addPauseToSession
@@ -195,8 +205,8 @@ paths:
               $ref: '#/components/schemas/Pause'
       responses:
         '201':
-          description: Pause added successfully
-  /{userId}/sessions/{sessionId}/pauses/{pauseId}:
+          description: Pause added
+  /pauses/{userId}/sessions/{sessionId}/pauses/{pauseId}:
     put:
       summary: Update a pause
       operationId: updatePause
@@ -224,7 +234,7 @@ paths:
               $ref: '#/components/schemas/Pause'
       responses:
         '200':
-          description: Pause updated successfully
+          description: Pause updated
     delete:
       summary: Delete a pause
       operationId: deletePause
@@ -246,7 +256,7 @@ paths:
             type: string
       responses:
         '204':
-          description: Pause deleted successfully
+          description: Pause deleted
 components:
   schemas:
     User:
@@ -254,13 +264,10 @@ components:
       properties:
         _id:
           type: string
-          description: Unique identifier for the user, optional
         email:
           type: string
-          description: Email address of the user
         nom:
           type: string
-          description: Name of the user
         sessions:
           type: array
           items:
@@ -270,15 +277,10 @@ components:
       properties:
         _id:
           type: string
-          description: Unique identifier for the session, optional
         heure_debut:
           type: string
-          format: date-time
-          description: Start time of the session
         heure_fin:
           type: string
-          format: date-time
-          description: End time of the session
         pauses:
           type: array
           items:
@@ -288,12 +290,7 @@ components:
       properties:
         _id:
           type: string
-          description: Unique identifier for the pause, optional
         heure_debut:
           type: string
-          format: date-time
-          description: Start time of the pause
         heure_fin:
           type: string
-          format: date-time
-          description: End time of the pause
