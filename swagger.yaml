@@ -1,0 +1,299 @@
+openapi: 3.0.0
+info:
+  title: User Session Management API
+  version: 1.0.0
+servers:
+  - url: 'https://api.yourdomain.com'
+paths:
+  /{id}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete a user by ID
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+  /:
+    get:
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+    put:
+      summary: Update an existing user
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully
+    delete:
+      summary: Delete all users
+      operationId: deleteUsers
+      responses:
+        '204':
+          description: All users deleted successfully
+  /login:
+    post:
+      summary: User login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+  /{userId}/sessions:
+    post:
+      summary: Add a session to a user
+      operationId: addSessionToUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionPort'
+      responses:
+        '201':
+          description: Session added successfully
+    get:
+      summary: Get all sessions for a user
+      operationId: getSessionsByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionPort'
+  /{userId}/sessions/{sessionId}:
+    put:
+      summary: Update a session
+      operationId: updateSession
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionPort'
+      responses:
+        '200':
+          description: Session updated successfully
+    delete:
+      summary: Delete a session
+      operationId: deleteSession
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session deleted successfully
+  /{userId}/sessions/{sessionId}/pauses:
+    post:
+      summary: Add a pause to a session
+      operationId: addPauseToSession
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pause'
+      responses:
+        '201':
+          description: Pause added successfully
+  /{userId}/sessions/{sessionId}/pauses/{pauseId}:
+    put:
+      summary: Update a pause
+      operationId: updatePause
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pauseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pause'
+      responses:
+        '200':
+          description: Pause updated successfully
+    delete:
+      summary: Delete a pause
+      operationId: deletePause
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pauseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Pause deleted successfully
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the user, optional
+        email:
+          type: string
+          description: Email address of the user
+        nom:
+          type: string
+          description: Name of the user
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionPort'
+    SessionPort:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the session, optional
+        heure_debut:
+          type: string
+          format: date-time
+          description: Start time of the session
+        heure_fin:
+          type: string
+          format: date-time
+          description: End time of the session
+        pauses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pause'
+    Pause:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the pause, optional
+        heure_debut:
+          type: string
+          format: date-time
+          description: Start time of the pause
+        heure_fin:
+          type: string
+          format: date-time
+          description: End time of the pause

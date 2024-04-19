@@ -1,23 +1,25 @@
 class User {
-  constructor(email, password, age, _id = null) {
+  constructor(email, nom, sessions = [], _id = null) {
     if (_id) {
       this._id = _id;
     }
     this.email = email;
-    this.password = password;
-    this.age = age;
+    this.nom = nom;
+    this.sessions = sessions;
   }
 
   toJSON() {
     return {
       id: this._id,
       email: this.email,
-      age: this.age || null,
+      nom: this.nom,
+      sessions: this.sessions.map(session => session.toJSON())
     };
   }
 
   static fromDocument(doc) {
-    return new User(doc.email, doc.password, doc.age, doc._id);
+    const sessions = doc.sessions.map(session => SessionPort.fromDocument(session));
+    return new User(doc.email, doc.nom, sessions, doc._id);
   }
 }
 
