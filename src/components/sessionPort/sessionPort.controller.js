@@ -21,6 +21,19 @@ class SessionPortController {
       .catch(err => res.status(404).send(err.message));
   };
 
+  endSession = async (req, res) => {
+    const { userId, sessionId } = req.params;
+    this.sessionPortService.endSession(userId, sessionId)
+      .then(session => {
+        if (!session.endTime) {
+          res.status(400).send({ message: "Session cannot be ended at this time." });
+        } else {
+          res.status(200).send(session.toJSON());
+        }
+      })
+      .catch(err => res.status(500).send({ message: err.message }));
+  };
+
   deleteSession = async (req, res) => {
     const { userId, sessionId } = req.params;
     this.sessionPortService.deleteSession(userId, sessionId)

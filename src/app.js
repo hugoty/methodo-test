@@ -4,11 +4,13 @@ import loadRoutes from './loaders/routes.js';
 import errorMiddleware from './middlewares/error.js';
 import configSwagger from './config/configSwagger.js';
 
-const app = express();
+export default async function createApp() {
+  const app = express();
+  app.use(bodyParser.json());
+  
+  loadRoutes(app);  // Ensure this is compatible with async, if it needs to be
+  app.use(errorMiddleware);
+  configSwagger(app);  // Ensure this does not require db connection or make it async if it does
 
-app.use(bodyParser.json());
-loadRoutes(app);
-app.use(errorMiddleware);
-configSwagger(app)
-
-export default app;
+  return app;
+}

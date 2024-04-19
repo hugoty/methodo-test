@@ -1,11 +1,8 @@
-import db from "../../mongo/db.js";
-import {ObjectId} from "mongodb";
+import { getDb } from "../../mongo/db.js";import {ObjectId} from "mongodb";
 import User from "./user.entities.js";
 
 class UserRepository {
-    constructor() {
-        this.collection = db.collection("users");
-    }
+
 
     async getById(id) {
         const query = this.createBsonId(id);

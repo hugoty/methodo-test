@@ -1,6 +1,6 @@
-import db from "../../mongo/db.js";  // Your SQL database connection module
-
+import { getDb } from "../../mongo/db.js";
 class PauseRepository {
+
     async getPauseById(userId, sessionId, pauseId) {
         const query = `
             SELECT * FROM pauses

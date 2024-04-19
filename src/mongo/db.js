@@ -5,20 +5,23 @@ dotenv.config();
 
 const connectionString = process.env.MONGO_URI || "";
 const client = new MongoClient(connectionString);
-
-let conn;
 let db;
 
-async function connectToClient() {
+export async function connectToDatabase() {
     try {
-        conn = await client.connect();
+        const conn = await client.connect();
         db = conn.db(process.env.MONGO_DB || "");
+        console.log("MongoDB connected successfully");
     } catch (e) {
-        console.error(e);
+        console.error('Failed to connect to MongoDB', e);
+        process.exit(1);  // Consider a retry logic or a graceful shutdown
     }
 }
 
-connectToClient();
-
-
-export default db;
+export async function getDb() {
+    await connectToDatabase();
+    if (!db) {
+        throw new Error('Database not initialized');
+    }
+    return db;
+}

@@ -1,6 +1,6 @@
-import db from "../../mongo/db.js";  // Your SQL database connection module
-
+import { getDb } from "../../mongo/db.js";
 class SessionPortRepository {
+
     async getSessionById(userId, sessionId) {
         const query = `
             SELECT * FROM session_ports

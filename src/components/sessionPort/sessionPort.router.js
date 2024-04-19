@@ -14,8 +14,9 @@ class SessionPortRouter {
     router.route('/:userId/sessions/:sessionId')
       .put(this.sessionPortController.updateSession)
       .delete(this.sessionPortController.deleteSession);
-
-    return router;
+      router.post('/:userId/endSession/:sessionId', this.sessionPortController.endSession);
+      
+      return router;
   }
 }
 
